@@ -7,7 +7,10 @@ from get_date import *
 tasks = dict()
 
 def send_message(text):
-    requests.get(f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id={CHAT_ID}&text={text}')
+    try:
+        requests.get(f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id={CHAT_ID}&text={text}')
+    except:
+        send_message(text)
     return
 
 def get_answer(offset):

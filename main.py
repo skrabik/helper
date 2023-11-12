@@ -16,8 +16,10 @@ while True:
         requests.get(f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id={CHAT_ID}&text=Задача через 30 мин: \n {tasks[dt]}')
         del tasks[dt]
 
-
-    update = requests.get(f'https://api.telegram.org/bot{BOT_TOKEN}/getUpdates?offset={str(OFFSET)}')
+    try:
+        update = requests.get(f'https://api.telegram.org/bot{BOT_TOKEN}/getUpdates?offset={str(OFFSET)}')
+    except:
+        continue
     if len(update.json()['result']) != 0:
         try:
             message = Message(update)
