@@ -15,7 +15,10 @@ def send_message(text):
 
 def get_answer(offset):
     while True:
-        update = requests.get(f'https://api.telegram.org/bot{BOT_TOKEN}/getUpdates?offset={str(offset)}')
+        try:
+            update = requests.get(f'https://api.telegram.org/bot{BOT_TOKEN}/getUpdates?offset={str(offset)}')
+        except:
+            continue
         if len(update.json()['result']) != 0:
             message = Message(update)
             text = message.text
@@ -61,11 +64,15 @@ def del_task(offset):
     send_message('Введите номер задачи')
 
     offset, text = get_answer(offset)
+
+    if int(text) > len(tasks):
+        send_message('Такого номера задачи нет')
+        return offset
     c = 1
     for i in tasks:
         if c == int(text):
             del tasks[i]
             break
         c += 1
-
+    send_message(f'задача {c} успешно удалена')
     return offset

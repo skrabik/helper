@@ -13,8 +13,11 @@ while True:
 
     dt = datetime.datetime.now().replace(second=0, microsecond=0)
     if dt in tasks:
-        requests.get(f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id={CHAT_ID}&text=Задача через 30 мин: \n {tasks[dt]}')
-        del tasks[dt]
+        try:
+            requests.get(f'https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id={CHAT_ID}&text=Задача через 30 мин: \n {tasks[dt]}')
+            del tasks[dt]
+        except:
+            continue
 
     try:
         update = requests.get(f'https://api.telegram.org/bot{BOT_TOKEN}/getUpdates?offset={str(OFFSET)}')
@@ -41,10 +44,7 @@ while True:
                 OFFSET = db[message.text](offset=OFFSET)
             else:
                 try:
-                    requests.get(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id={message.chat_id}&text={answer}")
+                    send_message(answer)
                     print('Ответ успешно отправлен')
                 except:
                     print('Ответ не был отправлен')
-
-            with open('last_offset.txt', 'w') as f:
-                f.write(str(OFFSET))
